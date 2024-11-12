@@ -1,0 +1,38 @@
+{# templates/film/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des films{% endblock %}
+
+{% block body %}
+    <h1>Liste des films</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Durée</th>
+                <th>Description</th>
+                <th>Note générale</th>
+                <th>Studio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for film in films %}
+                <tr>
+                    <td>{{ film.getimage()}}</td>
+                    <td>{{ film.getnom()}}</td>
+                    <td>{{ film.getduree() }}</td>
+                    <td>{{ film.getdescription() }}</td>
+                    <td>{{ film.getnoteGenerale() }}</td>
+                    <td>{{ film.getstudioFilm() }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Aucun film trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,35 @@
+{# templates/personnage/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des personnages{% endblock %}
+
+{% block body %}
+    <h1>Liste des personnages</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Films</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for personnage in personnages %}
+                <tr>
+                    <!-- Utilisez les bons getters pour l'objet 'personnage' -->
+                    <td><img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" width="100"></td>
+                    <td>{{ personnage.getNom() }}</td>
+                    <td>{{ personnage.getPrenom() }}</td>
+                    <td>{{ personnage.getFilms() }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Aucun personnage trouvé</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
