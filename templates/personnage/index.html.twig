@@ -5,36 +5,38 @@
 {% block title %}Liste des personnages{% endblock %}
 
 {% block body %}
-    <h1>Liste des personnages</h1>
+    <div class="characters-container">
+        <h1>Liste des personnages</h1>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Films</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for personnage in personnages %}
+        <table class="characters-table">
+            <thead>
                 <tr>
-                    <td><img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" width="100"></td>
-                    <td>{{ personnage.getNom() }}</td>
-                    <td>{{ personnage.getPrenom() }}</td>
-                    <td>
-                        {% for film in personnage.getFilms() %}
-                            {{ film.getNom() }}{% if not loop.last %}, {% endif %}
-                        {% else %}
-                            Aucun film
-                        {% endfor %}
-                    </td>
+                    <th>Image</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Films</th>
                 </tr>
-            {% else %}
-                <tr>
-                    <td colspan="4">Aucun personnage trouvé</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                {% for personnage in personnages %}
+                    <tr>
+                        <td><img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" width="100" height="100"></td>
+                        <td>{{ personnage.getNom() }}</td>
+                        <td>{{ personnage.getPrenom() }}</td>
+                        <td>
+                            {% for film in personnage.getFilms() %}
+                                {{ film.getNom() }}{% if not loop.last %}, {% endif %}
+                            {% else %}
+                                Aucun film
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4">Aucun personnage trouvé</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

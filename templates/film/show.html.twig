@@ -5,9 +5,16 @@
 {% block title %}{{ film.nom }}{% endblock %}
 
 {% block body %}
-    <h1>{{ film.nom }}</h1>
-    <td><img src="{{ film.getImage() }}" alt="{{ film.getNom() }}" width="100"></td>
-    <p>{{ film.description }}</p>
-    <p>Durée : {{ film.duree }} minutes</p>
-    <p>Note générale : {{ film.noteGenerale }} / 10</p>
+    <div class="film-details">
+        <h1>{{ film.nom }}</h1>
+        <div class="film-details-container">
+            <img src="{{ film.getImage() }}" alt="{{ film.getNom() }}" class="film-image" style="width: 300px; height: 450px; object-fit: cover;">
+            <div class="film-info">
+                <p><strong>Description :</strong> {{ film.description }}</p>
+                <p><strong>Durée :</strong> {{ film.duree }} minutes</p>
+                <p><strong>Note générale :</strong> {{ film.noteGenerale }} / 10</p>
+                <button class="like-button">Like</button>
+            </div>
+        </div>
+    </div>
 {% endblock %}
