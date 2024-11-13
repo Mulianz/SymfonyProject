@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class FilmController extends AbstractController
 {
 
-        #[Route("/films", name:"film_list")]
+        #[Route("/", name:"film_list")]
 
     public function index(EntityManagerInterface $entityManager): Response
     {
@@ -22,14 +22,17 @@ class FilmController extends AbstractController
     }
 
     
-        #[Route("/film/{id}", name:"film_detail")]
-    
+    // src/Controller/FilmController.php
+
+    #[Route("/films/{id}", name:"film_detail")]
     public function show(Film $film): Response
     {
         return $this->render('film/show.html.twig', [
-            'film' => $film,
+            'film' => $film,  // Passez l'objet film à la vue
         ]);
     }
+
+
 
     
         #[Route("/film", name:"app_film")]

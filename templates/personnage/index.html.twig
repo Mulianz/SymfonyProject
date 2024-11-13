@@ -19,11 +19,16 @@
         <tbody>
             {% for personnage in personnages %}
                 <tr>
-                    <!-- Utilisez les bons getters pour l'objet 'personnage' -->
                     <td><img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" width="100"></td>
                     <td>{{ personnage.getNom() }}</td>
                     <td>{{ personnage.getPrenom() }}</td>
-                    <td>{{ personnage.getFilms() }}</td>
+                    <td>
+                        {% for film in personnage.getFilms() %}
+                            {{ film.getNom() }}{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            Aucun film
+                        {% endfor %}
+                    </td>
                 </tr>
             {% else %}
                 <tr>

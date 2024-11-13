@@ -15,22 +15,30 @@
                 <th>Durée</th>
                 <th>Description</th>
                 <th>Note générale</th>
-                <th>Studio</th>
+                <th>Personnages</th>  {# Titre de la colonne pour afficher les personnages #}
             </tr>
         </thead>
         <tbody>
             {% for film in films %}
                 <tr>
-                    <td>{{ film.getimage()}}</td>
-                    <td>{{ film.getnom()}}</td>
-                    <td>{{ film.getduree() }}</td>
-                    <td>{{ film.getdescription() }}</td>
-                    <td>{{ film.getnoteGenerale() }}</td>
-                    <td>{{ film.getstudioFilm() }}</td>
+                    <td><img src="{{ film.getImage() }}" alt="{{ film.getNom() }}" width="100"></td>
+                    <td>{{ film.getNom() }}</td>
+                    <td>{{ film.getDuree() }} minutes</td>
+                    <td>{{ film.getDescription() }}</td>
+                    <td>{{ film.getNoteGenerale() }} / 10</td>  {# Affiche la note générale du film #}
+                    <td>
+                        {% for personnage in film.getPersonnages() %}
+                            <a href="{{ path('personnage_detail', {'id': personnage.id}) }}">
+                                {{ personnage.getNom() }} {{ personnage.getPrenom() }}
+                            </a>{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            Aucun personnage trouvé
+                        {% endfor %}
+                    </td>
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="5">Aucun film trouvé</td>
+                    <td colspan="7">Aucun film trouvé</td>
                 </tr>
             {% endfor %}
         </tbody>

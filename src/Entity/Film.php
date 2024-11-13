@@ -1,8 +1,12 @@
 <?php
 
+// src/Entity/Film.php
+
 namespace App\Entity;
 
 use App\Repository\FilmRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -29,8 +33,17 @@ class Film
     #[ORM\Column]
     private ?float $noteGenerale = null;
 
+    // Ajout de la propriété studioFilm
     #[ORM\Column(length: 255)]
     private ?string $studioFilm = null;
+
+    #[ORM\ManyToMany(targetEntity: Personnages::class, mappedBy: 'films')]
+    private Collection $personnages;
+
+    public function __construct()
+    {
+        $this->personnages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -44,8 +57,7 @@ class Film
 
     public function setImage(string $image): static
     {
-        $this->nom = $image;
-
+        $this->image = $image;
         return $this;
     }
 
@@ -57,7 +69,6 @@ class Film
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -69,7 +80,6 @@ class Film
     public function setDuree(string $duree): static
     {
         $this->duree = $duree;
-
         return $this;
     }
 
@@ -81,7 +91,6 @@ class Film
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
@@ -93,19 +102,31 @@ class Film
     public function setNoteGenerale(float $noteGenerale): static
     {
         $this->noteGenerale = $noteGenerale;
+        return $this;
+    }
+
+    public function getPersonnages(): Collection
+    {
+        return $this->personnages;
+    }
+
+    public function addPersonnage(Personnages $personnage): self
+    {
+        if (!$this->personnages->contains($personnage)) {
+            $this->personnages->add($personnage);
+            $personnage->addFilm($this);
+        }
 
         return $this;
     }
 
-    public function getStudioFilm(): ?string
+    public function removePersonnage(Personnages $personnage): self
     {
-        return $this->studioFilm;
-    }
-
-    public function setStudioFilm(string $studioFilm): static
-    {
-        $this->studioFilm = $studioFilm;
+        if ($this->personnages->removeElement($personnage)) {
+            $personnage->removeFilm($this);
+        }
 
         return $this;
     }
 }
+
