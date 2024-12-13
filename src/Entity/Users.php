@@ -4,27 +4,45 @@ namespace App\Entity;
 
 use App\Repository\UsersRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
-class Users
+class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    private $id;
 
-    #[ORM\Column(length: 255)]
-    private ?string $nom = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private $nom;
 
-    #[ORM\Column(length: 255)]
-    private ?string $prenom = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private $prenom;
 
-    #[ORM\Column(length: 255)]
-    private ?string $pseudo = null;
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private $pseudo;
 
-    #[ORM\Column(length: 255)]
-    private ?string $email = null;
+    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    private $email;
 
+    #[ORM\Column(type: 'string', length: 255)]
+    private $password;  // Le champ mot de passe
+
+    // Getter et Setter pour le mot de passe
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    // Autres getters et setters
     public function getId(): ?int
     {
         return $this->id;
@@ -35,10 +53,9 @@ class Users
         return $this->nom;
     }
 
-    public function setNom(string $nom): static
+    public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -47,10 +64,9 @@ class Users
         return $this->prenom;
     }
 
-    public function setPrenom(string $prenom): static
+    public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
@@ -59,10 +75,9 @@ class Users
         return $this->pseudo;
     }
 
-    public function setPseudo(string $pseudo): static
+    public function setPseudo(string $pseudo): self
     {
         $this->pseudo = $pseudo;
-
         return $this;
     }
 
@@ -71,10 +86,32 @@ class Users
         return $this->email;
     }
 
-    public function setEmail(string $email): static
+    public function setEmail(string $email): self
     {
         $this->email = $email;
-
         return $this;
+    }
+
+    // Implémentation des méthodes de l'interface UserInterface
+    public function getRoles(): array
+    {
+        return ['ROLE_USER']; // Par défaut, un utilisateur a ce rôle
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Rien à faire ici, car nous n'avons pas d'informations sensibles à effacer.
+    }
+    
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email; // Retourner l'email comme identifiant unique
+    }
+
+    // Implémentation de l'interface PasswordAuthenticatedUserInterface
+    public function getSalt(): ?string
+    {
+        return null; // Pas nécessaire si vous utilisez bcrypt ou Argon2 (les algorithmes modernes)
     }
 }

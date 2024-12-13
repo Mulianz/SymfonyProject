@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+    <h1>Profil de {{ user.pseudo }}</h1>
+
+    <h2>Films likés :</h2>
+    {% if likedFilms is empty %}
+        <p>Vous n'avez pas encore liké de films.</p>
+    {% else %}
+        <ul>
+            {% for like in likedFilms %}
+                <li>{{ like.film.nom }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
