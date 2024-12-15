@@ -1,27 +1,34 @@
-{# templates/personnage/show.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ personnage.nom }} {{ personnage.prenom }}{% endblock %}
 
 {% block body %}
-    <h1>{{ personnage.nom }} {{ personnage.prenom }}</h1>
-    <div>
-        <img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" width="100">  {# Affiche l'image du personnage #}
+    <div class="character-details-container">
+        <h1>{{ personnage.nom }} {{ personnage.prenom }}</h1>
+        <div>
+            <img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" width="150">
+        </div>
+        
+        <h2>Biographie</h2>
+        {% if personnage.getBio() is not empty %}
+            <p>{{ personnage.getBio() }}</p>
+        {% else %}
+            <p>Aucune biographie disponible pour ce personnage.</p>
+        {% endif %}
+        
+        <h2>Films associés</h2>
+        {% if personnage.getFilms() is not empty %}
+            <ul>
+                {% for film in personnage.getFilms() %}
+                    <li>
+                        <a href="{{ path('film_show', {'id': film.id}) }}">
+                            {{ film.getNom() }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Aucun film associé à ce personnage.</p>
+        {% endif %}
     </div>
-    
-    <h2>Films associés</h2>
-    {% if personnage.getFilms() is not empty %}
-        <ul>
-            {% for film in personnage.getFilms() %}
-                <li>
-                    <a href="{{ path('film_detail', {'id': film.id}) }}">
-                        {{ film.getNom() }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Aucun film associé à ce personnage.</p>
-    {% endif %}
 {% endblock %}

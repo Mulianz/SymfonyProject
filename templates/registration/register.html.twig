@@ -1,6 +1,29 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Inscription</h1>
-    {{ form(form) }}
+<div class="signup-page">
+    <div class="signup-block">
+        <h1 class="signup-title">🎥 Inscription</h1>
+        <p class="signup-subtitle">Rejoignez notre univers cinématographique</p>
+        
+        {{ form_start(form, {'attr': {'class': 'signup-form'}}) }}
+            {% for field in form %}
+                {% if field.vars.name != '_token' and field.vars.name != 'submit' %}
+                    <div class="form-group">
+                        {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(field, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(field) }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit" class="signup-button">S'inscrire</button>
+            </div>
+        {{ form_end(form) }}
+
+        <div class="signup-footer">
+            <p class="login-prompt">Déjà inscrit ? <a href="/login" class="login-link">Connectez-vous</a></p>
+        </div>
+    </div>
+</div>
 {% endblock %}

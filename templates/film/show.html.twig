@@ -1,20 +1,49 @@
-{# templates/film/show.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}{{ film.nom }}{% endblock %}
 
 {% block body %}
-    <div class="film-details">
-        <h1>{{ film.nom }}</h1>
-        <div class="film-details-container">
-            <img src="{{ film.getImage() }}" alt="{{ film.getNom() }}" class="film-image" style="width: 300px; height: 450px; object-fit: cover;">
-            <div class="film-info">
+    <div class="film-details-page">
+        <h1 class="film-title">{{ film.nom }}</h1>
+
+        <!-- Section principale : image et informations -->
+        <div class="film-details-wrapper">
+            <!-- Image du film -->
+            <div class="film-image-box">
+                <img src="{{ film.getImage() }}" alt="{{ film.getNom() }}" class="film-img">
+            </div>
+
+            <!-- Informations principales -->
+            <div class="film-info-box">
                 <p><strong>Description :</strong> {{ film.description }}</p>
                 <p><strong>Durée :</strong> {{ film.duree }} minutes</p>
                 <p><strong>Note générale :</strong> {{ film.noteGenerale }} / 10</p>
-                <button class="like-button">Like</button>
+                <button class="film-like-button">Like</button>
             </div>
+        </div>
+
+        <!-- Section : Biographie -->
+        <div class="film-bio-box">
+            <h2>Biographie</h2>
+            <p>{{ film.getBio() }}</p>
+        </div>
+
+        <!-- Section : Acteurs -->
+        <div class="film-actors-box">
+            <h2>Acteurs</h2>
+            {% if film.getPersonnages() is not empty %}
+                <ul class="actors-list">
+                    {% for acteur in film.getPersonnages() %}
+                        <li class="actor-item">
+                            <a href="{{ path('personnage_detail', {'id': acteur.id}) }}" class="actor-link">
+                                {{ acteur.getNom() }} {{ acteur.getPrenom() }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Aucun acteur associé à ce film.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

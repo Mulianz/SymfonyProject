@@ -39,6 +39,19 @@ class Film
 
     #[ORM\ManyToMany(targetEntity: Personnages::class, mappedBy: 'films')]
     private Collection $personnages;
+    #[ORM\Column(type: "text", nullable: false)]
+private ?string $bio = null;
+
+public function getBio(): ?string
+{
+    return $this->bio;
+}
+
+public function setBio(string $bio): self
+{
+    $this->bio = $bio;
+    return $this;
+}
 
     public function __construct()
     {

@@ -1,5 +1,3 @@
-{# templates/personnage/index.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Liste des personnages{% endblock %}
@@ -20,12 +18,18 @@
             <tbody>
                 {% for personnage in personnages %}
                     <tr>
-                        <td><img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" width="100" height="100"></td>
+                        <!-- Image cliquable -->
+                        <td>
+                            <a href="{{ path('personnage_detail', {'id': personnage.id}) }}">
+                                <img src="{{ personnage.getImagePersonnage() }}" alt="{{ personnage.getNom() }}" class="personnage-image">
+                            </a>
+                        </td>
                         <td>{{ personnage.getNom() }}</td>
                         <td>{{ personnage.getPrenom() }}</td>
                         <td>
                             {% for film in personnage.getFilms() %}
-                                {{ film.getNom() }}{% if not loop.last %}, {% endif %}
+                                <a href="{{ path('film_show', {'id': film.id}) }}" class="film-link">{{ film.getNom() }}</a>
+                                {% if not loop.last %}, {% endif %}
                             {% else %}
                                 Aucun film
                             {% endfor %}
