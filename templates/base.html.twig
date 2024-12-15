@@ -22,7 +22,7 @@
             </div>
             <nav class="navigation">
                 <a href="/" class="nav-link">Accueil</a>
-                <a href="/personnages" class="nav-link">personnage</a>
+                <a href="/personnages" class="nav-link">personnages</a>
             </nav>
             <div class="user-icon">
                 <a href="/profile" class="user-link" title="Mon profil">
@@ -33,8 +33,8 @@
     </header>
 
     <div class="welcome-message">
-        {% if users %}
-            <p>Bienvenue {{ users.pseudo }} !</p> <!-- Affiche le pseudo de l'utilisateur -->
+        {% if users is defined and users is not null %}
+            <p>Bienvenue {{ users.pseudo }} !</p>  <!-- Utilisation directe de l'attribut pseudo -->
         {% else %}
             <p>Bienvenue invité !</p>
         {% endif %}
