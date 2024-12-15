@@ -16,6 +16,7 @@ class FilmController extends AbstractController
     #[Route('/', name: 'app_films')]
     public function index(FilmRepository $filmRepository): Response
     {
+        dd("ici");
         $films = $filmRepository->findAll();  // Récupère tous les films
 
         return $this->render('film/index.html.twig', [

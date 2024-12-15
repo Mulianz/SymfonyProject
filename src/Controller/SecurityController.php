@@ -36,6 +36,7 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login_post', methods: ['POST'])]
     public function login(Request $request): Response
     {
+    
         // Récupérer les données du formulaire
         $data = $request->request->all();
         $email = $data['email'] ?? null;
@@ -73,18 +74,20 @@ class SecurityController extends AbstractController
             'roles' => $user->getRoles(),
             'pseudo' => $user->getPseudo(),
         ]);
+        
 
         // Rediriger vers la page d'accueil
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('app_films');
+
     }
 
     // Page d'accueil (route /)
-    #[Route('/', name: 'app_home', methods: ['GET'])]
+    #[Route('/', name: 'app_films', methods: ['GET'])]
     public function home(Request $request): Response
     {
+
         // Récupérer les données de la session
         $users = $request->getSession()->get('users');
-
         // Vérifier si les données sont présentes dans la session
         if (!$users) {
             return $this->redirectToRoute('app_login'); // Rediriger vers la page de login si l'utilisateur n'est pas connecté
