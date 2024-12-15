@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Film;
-use App\Entity\Like;
+use App\Entity\Likes;
 use App\Repository\FilmRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,7 +16,6 @@ class FilmController extends AbstractController
     #[Route('/', name: 'app_films')]
     public function index(FilmRepository $filmRepository): Response
     {
-        dd("ici");
         $films = $filmRepository->findAll();  // Récupère tous les films
 
         return $this->render('film/index.html.twig', [
@@ -44,13 +43,13 @@ class FilmController extends AbstractController
     }
 
     // Vérifiez si l'utilisateur a déjà liké ce film
-    $existingLike = $entityManager->getRepository(Like::class)->findOneBy([
+    $existingLike = $entityManager->getRepository(Likes::class)->findOneBy([
         'user' => $user,
         'film' => $film,
     ]);
 
     if (!$existingLike) {
-        $like = new Like();
+        $like = new Likes();
         $like->setUser($user);
         $like->setFilm($film);
 

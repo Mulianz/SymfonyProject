@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Users;
 use Doctrine\ORM\EntityManagerInterface;
-
+use App\Repository\FilmRepository;
 class SecurityController extends AbstractController
 {
     private $passwordHasher;
@@ -83,10 +83,11 @@ class SecurityController extends AbstractController
 
     // Page d'accueil (route /)
     #[Route('/', name: 'app_films', methods: ['GET'])]
-    public function home(Request $request): Response
+    public function home(Request $request, FilmRepository $filmRepository): Response
     {
 
         // Récupérer les données de la session
+
         $users = $request->getSession()->get('users');
         // Vérifier si les données sont présentes dans la session
         if (!$users) {
@@ -94,8 +95,11 @@ class SecurityController extends AbstractController
         }
 
         // Passer les données à la vue
-        return $this->render('base.html.twig', [
-            'users' => $users, // Passe l'utilisateur connecté à la vue
+        $films = $filmRepository->findAll();  // Récupère tous les films
+
+        return $this->render('film/index.html.twig', [
+            'films' => $films,
+            'users' => $users,
         ]);
     }
 

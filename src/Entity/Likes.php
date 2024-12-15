@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: LikeRepository::class)]
-class Like
+class Likes
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
