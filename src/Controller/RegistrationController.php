@@ -27,7 +27,6 @@ class RegistrationController extends AbstractController
             ->add('pseudo', TextType::class)
             ->add('email', EmailType::class)
             ->add('password', PasswordType::class)
-            ->add('submit', SubmitType::class, ['label' => 'Inscription'])
             ->getForm();
 
         $form->handleRequest($request);

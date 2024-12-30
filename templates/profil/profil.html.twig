@@ -3,9 +3,9 @@
 {% block title %}Profil{% endblock %}
 
 {% block body %}
-    <h1>Profil de {{ user.pseudo }}</h1>
+    <h1>Profil de {{ users.pseudo }}</h1>
 
-    <h2>Films likés :</h2>
+    <h2>Films liker :</h2>
     {% if likedFilms is empty %}
         <p>Vous n'avez pas encore liké de films.</p>
     {% else %}

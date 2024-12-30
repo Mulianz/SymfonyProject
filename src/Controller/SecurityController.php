@@ -3,35 +3,117 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Entity\Users;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\FilmRepository;
 class SecurityController extends AbstractController
 {
-    #[Route('/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils): Response
+    private $passwordHasher;
+    private $entityManager;
+
+    public function __construct(
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager
+    ) {
+        $this->passwordHasher = $passwordHasher;
+        $this->entityManager = $entityManager;
+    }
+
+    // Affichage du formulaire de connexion
+    #[Route('/login', name: 'app_login', methods: ['GET'])]
+    public function loginForm(): Response
     {
-        // Vérifiez si l'utilisateur est déjà connecté
-        if ($this->getUser()) {
-            return $this->redirectToRoute('app_films'); // Redirige si déjà connecté
-        }
-
-        // Récupérez les erreurs de connexion
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
-
-        // Renvoyez la vue de connexion
         return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error' => $error,
+            'error' => null,
         ]);
     }
 
-    #[Route('/logout', name: 'app_logout')]
-    public function logout(): void
+    // Traitement du formulaire de connexion
+    #[Route('/login', name: 'app_login_post', methods: ['POST'])]
+    public function login(Request $request): Response
     {
-        // Symfony gère automatiquement la déconnexion via le firewall
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    
+        // Récupérer les données du formulaire
+        $data = $request->request->all();
+        $email = $data['email'] ?? null;
+        $password = $data['password'] ?? null;
+
+        // Vérifier si l'email et le mot de passe sont fournis
+        if (!$email || !$password) {
+            return $this->render('security/login.html.twig', [
+                'error' => [
+                    'messageKey' => 'Email et mot de passe requis',
+                    'messageData' => [],
+                ],
+            ]);            
+        }
+
+        // Trouver l'utilisateur en fonction de l'email
+        $user = $this->entityManager->getRepository(Users::class)->findOneBy(['email' => $email]);
+
+        if (!$user) {
+            return $this->render('security/login.html.twig', [
+                'error' => 'Utilisateur non trouvé',
+            ]);
+        }
+
+        // Vérifier si le mot de passe est valide
+        if (!$this->passwordHasher->isPasswordValid($user, $password)) {
+            return $this->render('security/login.html.twig', [
+                'error' => 'Mot de passe invalide',
+            ]);
+        }
+
+        // Si l'utilisateur est authentifié, créer une session
+        $session = $request->getSession();
+        // Stocker les informations de l'utilisateur dans la session
+        $session->set('users', [
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'roles' => $user->getRoles(),
+            'pseudo' => $user->getPseudo(),
+        ]);
+        
+
+        // Rediriger vers la page d'accueil
+        return $this->redirectToRoute('app_films');
+
+    }
+
+    // Page d'accueil (route /)
+    #[Route('/', name: 'app_films', methods: ['GET'])]
+    public function home(Request $request, FilmRepository $filmRepository): Response
+    {
+
+        // Récupérer les données de la session
+
+        $users = $request->getSession()->get('users');
+        // Vérifier si les données sont présentes dans la session
+        if (!$users) {
+            return $this->redirectToRoute('app_login'); // Rediriger vers la page de login si l'utilisateur n'est pas connecté
+        }
+
+        // Passer les données à la vue
+        $films = $filmRepository->findAll();  // Récupère tous les films
+
+        return $this->render('film/index.html.twig', [
+            'films' => $films,
+            'users' => $users,
+        ]);
+    }
+
+    // Déconnexion de l'utilisateur (effacer la session)
+    #[Route('/logout', name: 'app_logout', methods: ['GET'])]
+    public function logout(Request $request): Response
+    {
+        // Effacer les données de session
+        $request->getSession()->invalidate();
+
+        // Rediriger vers la page de connexion
+        return $this->redirectToRoute('app_login');
     }
 }
