@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Entity;
+use App\Repository\LikeRepository;
+
 
 use Doctrine\ORM\Mapping as ORM;
 

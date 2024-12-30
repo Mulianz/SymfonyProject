@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Film;
 use App\Entity\Likes;
+use App\Entity\Users;
 use App\Repository\FilmRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,34 +34,46 @@ class FilmController extends AbstractController
         ]);
     }
 
-    #[Route('/films/{id}/like', name: 'app_film_like')]
-    public function like(Film $film, EntityManagerInterface $entityManager): Response
+    #[Route('/films/{id}/like', name: 'app_film_like', methods: ['POST'])]
+    public function like(Film $film, Request $request, EntityManagerInterface $entityManager): Response
     {
-    $user = $this->getUser();  // Récupère l'utilisateur connecté
-    if (!$user) {
-        $this->addFlash('error', 'Vous devez être connecté pour liker un film.');
-        return $this->redirectToRoute('app_login'); // Redirige vers la page de connexion
+        // Récupérer les données de session
+        $session = $request->getSession();
+        $userData = $session->get('users');
+
+        if (!$userData) {
+            $this->addFlash('error', 'Vous devez être connecté pour liker un film.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Récupérer l'utilisateur depuis l'ID stocké dans la session
+        $user = $entityManager->getRepository(Users::class)->find($userData['id']);
+
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur non trouvé.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Vérifier si l'utilisateur a déjà liké ce film
+        $existingLike = $entityManager->getRepository(Likes::class)->findOneBy([
+            'user' => $user,
+            'film' => $film,
+        ]);
+
+        if (!$existingLike) {
+            $like = new Likes();
+            $like->setUser($user);
+            $like->setFilm($film);
+
+            $entityManager->persist($like);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Vous avez aimé ce film !');
+        } else {
+            $this->addFlash('warning', 'Vous avez déjà aimé ce film.');
+        }
+
+        return $this->redirectToRoute('app_films');
     }
-
-    // Vérifiez si l'utilisateur a déjà liké ce film
-    $existingLike = $entityManager->getRepository(Likes::class)->findOneBy([
-        'user' => $user,
-        'film' => $film,
-    ]);
-
-    if (!$existingLike) {
-        $like = new Likes();
-        $like->setUser($user);
-        $like->setFilm($film);
-
-        $entityManager->persist($like);
-        $entityManager->flush();
-        $this->addFlash('success', 'Vous avez aimé ce film!');
-    } else {
-        $this->addFlash('warning', 'Vous avez déjà aimé ce film!');
-    }
-
-    return $this->redirectToRoute('app_films');  // Redirige vers la liste des films
-}
 
 }

@@ -45,9 +45,12 @@
                         </p>
                     </div>
                             <!-- Formulaire de Like -->
-                        <form action="{{ path('like_film', {'filmId': film.id}) }}" method="POST">
+                        <form action="{{ path('app_film_like', {'id': film.id}) }}" method="POST">
                             <button type="submit" class="like-button">❤️ Like</button>
                         </form>
+
+
+
                 </li>
             {% else %}
                 <li class="film-list-empty">Aucun film trouvé</li>
