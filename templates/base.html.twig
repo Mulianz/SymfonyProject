@@ -12,43 +12,49 @@
 </head>
 <body>
     <header>
-    <div class="header-container">
-        <!-- Logo -->
-        <div class="logo">
-            <a href="/" class="home-link">
-                <span>🎬</span> MovieTime
-            </a>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="navigation">
-            <a href="/" class="nav-link">Accueil</a>
-            <a href="/personnages" class="nav-link">Personnages</a>
-        </nav>
-
-        <!-- Afficher pseudo ou connexion -->
-        <div class="header-profile">
-            {% if app.session.get('users') %}
-                <!-- Afficher le pseudo de l'utilisateur connecté -->
-                <a href="/profile" class="profile-link">
-                    <div class="profile-icon-container">
-                        <div class="profile-icon"></div>
-                    </div>
-                    <span class="profile-text">{{ app.session.get('users').pseudo }}</span>
+        <div class="header-container">
+            <!-- Logo -->
+            <div class="logo">
+                <a href="/" class="home-link">
+                    <span>🎬</span> MovieTime
                 </a>
-            {% else %}
-                <!-- Icône de connexion -->
-                <a href="/login" class="profile-link">
-                    <div class="profile-icon-container">
-                        <div class="profile-icon"></div>
-                    </div>
-                    <span class="profile-text">Connexion</span>
-                </a>
-            {% endif %}
-        </div>
-    </div>
-</header>
+            </div>
 
+            <!-- Navigation -->
+            <nav class="navigation">
+                <a href="/" class="nav-link">Accueil</a>
+                <a href="/personnages" class="nav-link">Personnages</a>
+            </nav>
+
+            <!-- Afficher pseudo ou connexion -->
+            <div class="header-profile">
+                {% if app.session.get('users') %}
+                    <!-- Afficher le pseudo de l'utilisateur connecté -->
+                    <a href="/profile" class="profile-link">
+                        <div class="profile-icon-container">
+                            <div class="profile-icon"></div>
+                        </div>
+                        <span class="profile-text">{{ app.session.get('users').pseudo }}</span>
+                    </a>
+                    <!-- Bouton de déconnexion -->
+                    <a href="{{ path('app_logout') }}" class="profile-link">
+                        <div class="profile-icon-container">
+                            <div class="profile-icon"></div>
+                        </div>
+                        <span class="profile-text">Déconnexion</span>
+                    </a>
+                {% else %}
+                    <!-- Icône de connexion -->
+                    <a href="/login" class="profile-link">
+                        <div class="profile-icon-container">
+                            <div class="profile-icon"></div>
+                        </div>
+                        <span class="profile-text">Connexion</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
 
     <main>
         {% block body %}{% endblock %}

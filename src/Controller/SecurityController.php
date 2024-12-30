@@ -8,8 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\Users;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\FilmRepository;
+
 class SecurityController extends AbstractController
 {
     private $passwordHasher;
@@ -36,7 +38,6 @@ class SecurityController extends AbstractController
     #[Route('/login', name: 'app_login_post', methods: ['POST'])]
     public function login(Request $request): Response
     {
-    
         // Récupérer les données du formulaire
         $data = $request->request->all();
         $email = $data['email'] ?? null;
@@ -44,28 +45,22 @@ class SecurityController extends AbstractController
 
         // Vérifier si l'email et le mot de passe sont fournis
         if (!$email || !$password) {
-            return $this->render('security/login.html.twig', [
-                'error' => [
-                    'messageKey' => 'Email et mot de passe requis',
-                    'messageData' => [],
-                ],
-            ]);            
+            $this->addFlash('error', 'Email ou mot de passe incorect');
+            return $this->redirectToRoute('app_login');
         }
 
         // Trouver l'utilisateur en fonction de l'email
         $user = $this->entityManager->getRepository(Users::class)->findOneBy(['email' => $email]);
 
         if (!$user) {
-            return $this->render('security/login.html.twig', [
-                'error' => 'Utilisateur non trouvé',
-            ]);
+            $this->addFlash('error', 'Email ou mot de passe incorect');
+            return $this->redirectToRoute('app_login');
         }
 
         // Vérifier si le mot de passe est valide
         if (!$this->passwordHasher->isPasswordValid($user, $password)) {
-            return $this->render('security/login.html.twig', [
-                'error' => 'Mot de passe invalide',
-            ]);
+            $this->addFlash('error', 'Email ou mot de passe incorect');
+            return $this->redirectToRoute('app_login');
         }
 
         // Si l'utilisateur est authentifié, créer une session
@@ -77,20 +72,16 @@ class SecurityController extends AbstractController
             'roles' => $user->getRoles(),
             'pseudo' => $user->getPseudo(),
         ]);
-        
 
         // Rediriger vers la page d'accueil
         return $this->redirectToRoute('app_films');
-
     }
 
     // Page d'accueil (route /)
     #[Route('/', name: 'app_films', methods: ['GET'])]
     public function home(Request $request, FilmRepository $filmRepository): Response
     {
-
         // Récupérer les données de la session
-
         $users = $request->getSession()->get('users');
         // Vérifier si les données sont présentes dans la session
         if (!$users) {
@@ -107,13 +98,13 @@ class SecurityController extends AbstractController
     }
 
     // Déconnexion de l'utilisateur (effacer la session)
-    #[Route('/logout', name: 'app_logout', methods: ['GET'])]
-    public function logout(Request $request): Response
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(Request $request): RedirectResponse
     {
-        // Effacer les données de session
-        $request->getSession()->invalidate();
-
-        // Rediriger vers la page de connexion
-        return $this->redirectToRoute('app_login');
+        // Déconnecter l'utilisateur en supprimant la session
+        $request->getSession()->remove('users');
+        
+        // Rediriger vers la page d'accueil ou une autre page après la déconnexion
+        return $this->redirectToRoute('app_films');  // Par exemple, rediriger vers la liste des films
     }
 }
