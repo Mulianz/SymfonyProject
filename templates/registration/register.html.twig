@@ -1,29 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
-<div class="signup-page">
-    <div class="signup-block">
-        <h1 class="signup-title">🎥 Inscription</h1>
-        <p class="signup-subtitle">Rejoignez notre univers cinématographique</p>
-        
-        {{ form_start(form, {'attr': {'class': 'signup-form'}}) }}
-            {% for field in form %}
-                {% if field.vars.name != '_token' and field.vars.name != 'submit' %}
-                    <div class="form-group">
-                        {{ form_label(field, null, {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(field, {'attr': {'class': 'form-input'}}) }}
-                        {{ form_errors(field) }}
-                    </div>
-                {% endif %}
-            {% endfor %}
-            <div class="form-actions">
-                <button type="submit" class="signup-button">S'inscrire</button>
-            </div>
-        {{ form_end(form) }}
+{% block title %}Profil{% endblock %}
 
-        <div class="signup-footer">
-            <p class="login-prompt">Déjà inscrit ? <a href="/login" class="login-link">Connectez-vous</a></p>
-        </div>
-    </div>
+{% block body %}
+<div class="profil-page">
+    <h1>Profil de {{ users.pseudo }}</h1>
+
+    <h2>Vos likes :</h2>
+    {% if likedFilms is empty %}
+        <p class="no-likes">Vous n'avez pas encore liké de films.</p>
+    {% else %}
+        <ul class="liked-films-list">
+            {% for like in likedFilms %}
+                <li class="film-item">
+                    <div class="film-info">
+                        <a href="{{ path('film_show', {'id': like.film.id}) }}" class="film-title">
+                            {{ like.film.nom }}
+                        </a>
+                        <!-- Formulaire de Dislike -->
+                        <form action="{{ path('app_film_dislike', {'id': like.film.id}) }}" method="POST">
+                            <button type="submit" class="dislike-button">👎 Dislike</button>
+                        </form>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </div>
 {% endblock %}

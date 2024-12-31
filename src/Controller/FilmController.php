@@ -10,7 +10,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Annotation\Route;use App\Repository\LikesRepository;
+
+
+
 
 class FilmController extends AbstractController
 {
@@ -80,5 +83,12 @@ class FilmController extends AbstractController
 
         return $this->redirectToRoute('app_films');
         }
+        private function isFilmLikedByUser(Film $film, Users $user, LikesRepository $likesRepository): bool
+{
+    return (bool) $likesRepository->findOneBy([
+        'film' => $film,
+        'user' => $user,
+    ]);
+}
 
 }

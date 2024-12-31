@@ -3,16 +3,33 @@
 {% block title %}Profil{% endblock %}
 
 {% block body %}
-    <h1>Profil de {{ users.pseudo }}</h1>
+<div class="profile-container">
+    <h1 class="profile-title">Profil de {{ users.pseudo }}</h1>
 
     <h2>Vos likes :</h2>
     {% if likedFilms is empty %}
-        <p>Vous n'avez pas encore liké de films.</p>
+        <p class="empty-list-message">Vous n'avez pas encore liké de films.</p>
     {% else %}
-        <ul>
+        <ul class="liked-films-list">
             {% for like in likedFilms %}
-                <li>{{ like.film.nom }}</li>
+                <li class="liked-film-item">
+                    <div>
+                        <h3>
+                            <a href="{{ path('film_show', {'id': like.film.id}) }}">
+                                {{ like.film.nom }}
+                            </a>
+                        </h3>
+                        <p>{{ like.film.description }}</p>
+                        <!-- Bouton Dislike -->
+                        <form action="{{ path('app_profil') }}" method="POST">
+                            <input type="hidden" name="film_id" value="{{ like.film.id }}">
+                            <button type="submit" class="dislike-button">👎 Dislike</button>
+                        </form>
+                    </div>
+                </li>
             {% endfor %}
         </ul>
     {% endif %}
+</div>
+
 {% endblock %}
