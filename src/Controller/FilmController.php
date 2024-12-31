@@ -34,7 +34,7 @@ class FilmController extends AbstractController
         ]);
     }
 
-    #[Route('/films/{id}/like', name: 'app_film_like', methods: ['POST'])]
+        #[Route('/films/{id}/like', name: 'app_film_like', methods: ['POST'])]
     public function like(Film $film, Request $request, EntityManagerInterface $entityManager): Response
     {
         // Récupérer les données de session
@@ -60,7 +60,14 @@ class FilmController extends AbstractController
             'film' => $film,
         ]);
 
-        if (!$existingLike) {
+        if ($existingLike) {
+            // Si un like existe, le supprimer
+            $entityManager->remove($existingLike);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Vous avez retiré votre like de ce film.');
+        } else {
+            // Sinon, ajouter un nouveau like
             $like = new Likes();
             $like->setUser($user);
             $like->setFilm($film);
@@ -69,11 +76,9 @@ class FilmController extends AbstractController
             $entityManager->flush();
 
             $this->addFlash('success', 'Vous avez aimé ce film !');
-        } else {
-            $this->addFlash('warning', 'Vous avez déjà aimé ce film.');
         }
 
         return $this->redirectToRoute('app_films');
-    }
+        }
 
 }
